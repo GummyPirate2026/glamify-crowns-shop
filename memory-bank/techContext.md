@@ -10,14 +10,17 @@
   - Built-in Image optimization
 
 ### Database & ORM
-- **SQLite** (`dev.db` file)
-  - Lightweight, file-based database
-  - No separate server required
-  - Perfect for self-hosting
+- **PostgreSQL** (Supabase hosted)
+  - Production-grade relational database
+  - Hosted on AWS us-east-1
+  - Native array and JSON support
+  - Connection pooling built-in
+  - Automatic backups
 - **Prisma 5.22.0**
   - Type-safe database client
   - Migration management
   - Schema-first development
+  - PostgreSQL-optimized queries
 
 ### State Management
 - **Zustand** with persistence middleware
@@ -57,16 +60,20 @@ npm install
 ```
 
 ### Environment Variables
-File: `.env.local`
+File: `.env`
 ```bash
-DATABASE_URL="file:./dev.db"
-NEXTAUTH_SECRET="your-nextauth-secret-here"
-NEXTAUTH_URL="http://localhost:3000"
-STRIPE_SECRET_KEY="your-stripe-secret-key"
-NEXT_PUBLIC_STRIPE_PUBLIC_KEY="your-stripe-public-key"
+DATABASE_URL="postgres://[user]:[password]@[host]:5432/[database]?sslmode=require"
+NEXTAUTH_SECRET="your-super-secret-nextauth-key"
+NEXTAUTH_URL="http://localhost:3001"
 ```
 
-**Note**: Only `DATABASE_URL` is currently used. Others are placeholders for future features.
+**In Use**:
+- `DATABASE_URL` - Supabase PostgreSQL connection string
+- `NEXTAUTH_SECRET` - JWT encryption key
+- `NEXTAUTH_URL` - Application URL for NextAuth
+
+**Future**:
+- Stripe keys for payment processing
 
 ### Database Setup
 ```bash
@@ -128,11 +135,12 @@ Server runs at: `http://localhost:3000` (or 3001 if 3000 is occupied)
 
 ## Technical Constraints
 
-### 1. SQLite Limitations
-- **No Native Arrays**: Use `|||`-separated strings
-- **No Native JSON**: Use string serialization
-- **Single Writer**: Not suitable for high-concurrency writes
-- **String Size**: Practical limit ~1GB per field (base64 images)
+### 1. PostgreSQL Advantages & Considerations
+- **Native Arrays**: ✅ Fully supported (String[], Integer[], etc.)
+- **Native JSON**: ✅ JSONB type for complex data
+- **Concurrent Access**: ✅ Excellent multi-user support
+- **Connection Pooling**: ✅ Built-in via Supabase
+- **Constraint**: Requires network connection (hosted database)
 
 ### 2. Next.js Body Size Limit
 - **Default**: 1MB request body
@@ -171,18 +179,26 @@ import Component from '@/app/components/...'
 ### Making Schema Changes
 ```bash
 # 1. Edit schema.prisma
-# 2. Push changes to database
+# 2. Push changes to PostgreSQL database
 npx prisma db push
 
-# 3. Regenerate client
+# 3. Regenerate Prisma Client
 npx prisma generate
 ```
 
 ### Viewing Data
 ```bash
+# Local GUI (recommended)
 npx prisma studio
+
+# Or use Supabase Dashboard
+# Visit your Supabase project dashboard
 ```
-Opens GUI at `http://localhost:5555`
+
+### Database Backups
+- Automatic backups via Supabase
+- Manual backups: `pg_dump` utility
+- Point-in-time recovery available
 
 ## Build & Deployment
 
@@ -197,10 +213,11 @@ npm start
 ```
 
 ### Deployment Considerations
-1. **Database**: Include `dev.db` or regenerate on server
-2. **Environment**: Set production environment variables
-3. **Images**: Consider migration to external storage for scale
-4. **Static Assets**: Automatically optimized by Next.js
+1. **Database**: Already hosted on Supabase (production-ready)
+2. **Environment**: Update `DATABASE_URL` for production if needed
+3. **Connection String**: Ensure SSL mode enabled (`?sslmode=require`)
+4. **Images**: Currently base64 in database, consider CDN for scale
+5. **Static Assets**: Automatically optimized by Next.js
 
 ### Recommended Hosting
 - **Vercel**: Native Next.js support, zero config
@@ -235,7 +252,16 @@ npm run lint         # Run ESLint
 ```
 Error: Invalid DATABASE_URL
 ```
-**Solution**: Verify `.env.local` has `DATABASE_URL="file:./dev.db"`
+**Solution**: Verify `.env` has valid PostgreSQL connection string starting with `postgres://` or `postgresql://`
+
+### Supabase Connection Issues
+```
+Error: Connection timeout
+```
+**Solution**: 
+1. Check Supabase project is active
+2. Verify connection pooler URL (not direct connection)
+3. Ensure SSL mode is enabled (`?sslmode=require`)
 
 ### Port Already in Use
 ```

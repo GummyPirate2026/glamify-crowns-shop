@@ -4,7 +4,7 @@
 
 ### Technology Stack
 - **Framework**: Next.js 15 with App Router
-- **Database**: SQLite with Prisma ORM
+- **Database**: PostgreSQL (Supabase) with Prisma ORM
 - **Authentication**: NextAuth.js v4 with JWT
 - **Password Hashing**: bcryptjs
 - **State Management**: Zustand (cart)
@@ -48,17 +48,19 @@ glamify-crowns-shop/
 
 ## Key Technical Decisions
 
-### 1. SQLite for Local Storage
-**Why**: Simplicity and portability
-- No separate database server required
-- Single file database (`dev.db`)
-- Perfect for self-hosting
-- Easy backups (just copy the file)
+### 1. PostgreSQL for Production-Grade Storage
+**Why**: Scalability and robust features
+- Hosted on Supabase (AWS us-east-1)
+- Native array and JSON support
+- Connection pooling built-in
+- Automatic backups
+- Production-ready from day one
 
-**Trade-off**: SQLite doesn't support arrays or JSON natively
-- Images stored as `|||`-separated strings
-- Converted to arrays in API responses
-- See "Image Storage Pattern" below
+**Benefits**:
+- No need for workarounds (native arrays)
+- Better concurrent access handling
+- ACID compliance for transactions
+- Easy to scale as business grows
 
 ### 2. Server Components by Default
 **Why**: Better performance and SEO
@@ -109,16 +111,18 @@ const authOptions: AuthOptions = {
 }
 ```
 
-### 4. Base64 Image Storage
+### 4. Base64 Image Storage in PostgreSQL
 **Why**: Self-contained, no external dependencies
-- Images stored directly in database
+- Images stored directly in database as base64 strings
 - No separate file storage needed
-- Works with any hosting provider
-- Simplifies deployment
+- PostgreSQL TEXT type handles large strings efficiently
+- Native array support stores multiple images per product
 
-**Constraint**: 10MB body size limit for uploads
-- Configured in `next.config.js`
-- Keep images under 5MB for best performance
+**Implementation**:
+- Images stored as `String[]` in PostgreSQL
+- Each element is a base64-encoded image
+- 10MB body size limit configured in `next.config.js`
+- Recommendation: Keep images under 5MB each
 
 ## Critical Implementation Patterns
 
@@ -219,20 +223,18 @@ if (status === 'unauthenticated') redirect('/admin/login')
 ```
 
 
-### Image Storage Pattern
+### Image Storage Pattern (PostgreSQL)
 ```typescript
-// Storage: Convert array to string for SQLite
-const imagesString = imageArray.join('|||')
+// Storage: Direct array storage
 await prisma.product.create({
-  data: { images: imagesString }
+  data: { 
+    images: imageArray  // PostgreSQL handles arrays natively
+  }
 })
 
-// Retrieval: Convert string back to array
+// Retrieval: Native array from database
 const product = await prisma.product.findUnique({ where: { id } })
-const productWithArrays = {
-  ...product,
-  images: product.images ? product.images.split('|||') : []
-}
+// product.images is already a String[] array - no conversion needed!
 ```
 
 ### Client/Server Component Split
@@ -247,25 +249,23 @@ const productWithArrays = {
 - `/app/admin/products/new/page.tsx` - Form handling
 - `/app/store/cartStore.ts` - State management
 
-### API Route Pattern
+### API Route Pattern (PostgreSQL)
 ```typescript
-// GET: Fetch and transform data
+// GET: Fetch data (no transformation needed)
 export async function GET() {
   const products = await prisma.product.findMany()
-  return NextResponse.json(
-    products.map(p => ({
-      ...p,
-      images: p.images.split('|||')
-    }))
-  )
+  // products.images is already an array!
+  return NextResponse.json(products)
 }
 
-// POST: Transform and store data
+// POST: Store data directly
 export async function POST(request: NextRequest) {
   const data = await request.json()
-  const imagesString = data.images.join('|||')
   const product = await prisma.product.create({
-    data: { ...data, images: imagesString }
+    data: {
+      ...data,
+      images: Array.isArray(data.images) ? data.images : []
+    }
   })
   return NextResponse.json(product)
 }
@@ -289,19 +289,20 @@ export const useCart = create<CartStore>()(
 
 ## Database Schema
 
-### Product Model
+### Product Model (PostgreSQL)
 ```prisma
 model Product {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   name        String
   description String
   price       Float
-  images      String   // "img1|||img2|||img3"
+  images      String[]    // PostgreSQL native array
   category    String
-  stock       Int      @default(0)
-  featured    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  stock       Int         @default(0)
+  featured    Boolean     @default(false)
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 ```
 
