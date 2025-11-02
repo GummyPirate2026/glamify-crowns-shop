@@ -24,11 +24,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound()
   }
 
-  // Convert images string to array
-  const product = {
-    ...productRaw,
-    images: productRaw.images ? productRaw.images.split('|||') : []
-  }
+  // PostgreSQL returns arrays natively - no conversion needed
+  const product = productRaw
 
   const mainImage = product.images[0] || 'https://images.unsplash.com/photo-1611652022419-a9419f74343a?w=800'
 

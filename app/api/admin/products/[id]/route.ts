@@ -24,31 +24,21 @@ export async function PUT(
     const { id } = await params
     const data = await request.json()
     
-    // Convert images array to string for SQLite
-    const imagesString = Array.isArray(data.images) 
-      ? data.images.join('|||') 
-      : data.images
-    
+    // PostgreSQL supports arrays natively - no conversion needed
     const product = await prisma.product.update({
       where: { id },
       data: {
         name: data.name,
         description: data.description,
         price: data.price,
-        images: imagesString,
+        images: Array.isArray(data.images) ? data.images : [],
         category: data.category,
         stock: data.stock,
         featured: data.featured,
       },
     })
     
-    // Convert images back to array for response
-    const productWithArray = {
-      ...product,
-      images: product.images ? product.images.split('|||') : []
-    }
-    
-    return NextResponse.json(productWithArray)
+    return NextResponse.json(product)
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update product' }, { status: 500 })
   }

@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -23,7 +23,7 @@ model Product {
   name        String
   description String
   price       Float
-  images      String      // Stored as comma-separated string
+  images      String[]    // PostgreSQL native array support
   category    String
   stock       Int         @default(0)
   featured    Boolean     @default(false)

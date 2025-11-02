@@ -11,12 +11,7 @@ export async function GET() {
     const products = await prisma.product.findMany({
       orderBy: { createdAt: 'desc' },
     })
-    // Convert images string to array for frontend
-    const productsWithArrays = products.map((product: any) => ({
-      ...product,
-      images: product.images ? product.images.split('|||') : []
-    }))
-    return NextResponse.json(productsWithArrays)
+    return NextResponse.json(products)
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 })
   }
@@ -29,39 +24,20 @@ export async function POST(request: NextRequest) {
     console.log('=== PRODUCT CREATION DEBUG ===')
     console.log('Received data:', JSON.stringify(data, null, 2))
     
-    // Convert images array to comma-separated string for SQLite
-    const imagesString = Array.isArray(data.images) 
-      ? data.images.join('|||') 
-      : ''
-    
-    console.log('Images string length:', imagesString.length)
-    console.log('Images count:', data.images?.length || 0)
-    
-    const productData = {
-      name: data.name,
-      description: data.description,
-      price: data.price,
-      images: imagesString,
-      category: data.category,
-      stock: data.stock,
-      featured: data.featured || false,
-    }
-    
-    console.log('Creating product with data:', { ...productData, images: `${imagesString.length} chars` })
-    
+    // PostgreSQL supports arrays natively - no conversion needed
     const product = await prisma.product.create({
-      data: productData,
+      data: {
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        images: Array.isArray(data.images) ? data.images : [],
+        category: data.category,
+        stock: data.stock,
+        featured: data.featured || false,
+      },
     })
     
-    console.log('Product created successfully:', product.id)
-    
-    // Convert images back to array for response
-    const productWithArray = {
-      ...product,
-      images: product.images ? product.images.split('|||') : []
-    }
-    
-    return NextResponse.json(productWithArray, { status: 201 })
+    return NextResponse.json(product, { status: 201 })
   } catch (error: any) {
     console.error('=== ERROR CREATING PRODUCT ===')
     console.error('Error type:', error.constructor.name)

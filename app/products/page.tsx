@@ -6,17 +6,12 @@ import ProductCard from '../components/ProductCard'
 export const revalidate = 60
 
 export default async function ProductsPage() {
-  const productsRaw = await prisma.product.findMany({
+  // PostgreSQL returns arrays natively - no conversion needed
+  const products = await prisma.product.findMany({
     orderBy: {
       createdAt: 'desc',
     },
   })
-  
-  // Convert images string to array for display
-  const products = productsRaw.map((product: any) => ({
-    ...product,
-    images: product.images ? product.images.split('|||') : []
-  }))
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
