@@ -121,15 +121,26 @@
 - [x] File type restrictions (images only)
 - [x] SQL injection prevention (Prisma)
 - [x] Error boundaries
-- [ ] Admin authentication (not implemented - MVP scope)
+- [x] Admin authentication (In Progress)
+  - [x] Login page UI
+  - [x] NextAuth.js configuration
+  - [x] Credentials provider
+  - [x] Bcrypt password hashing
+  - [x] Admin user creation scripts
+  - [x] JWT session strategy
+  - [ ] Middleware protection (disabled for testing)
+  - [ ] Session management in admin pages
+  - [ ] Logout functionality
 
 ## Known Issues
 
 ### Current Limitations
-1. **No Authentication**
-   - Admin routes are unprotected
-   - Anyone can access `/admin` pages
-   - **Impact**: Not production-ready without auth
+1. **Authentication In Progress**
+   - Login page and NextAuth.js configured
+   - Middleware temporarily disabled for testing
+   - Need to enable middleware protection
+   - Need to add session checks in admin pages
+   - **Impact**: Admin routes currently unprotected during development
 
 2. **Image Size Constraints**
    - Base64 encoding increases size by ~33%
@@ -157,7 +168,14 @@
 ## Not Yet Implemented
 
 ### High Priority (Next Steps)
-- [ ] Admin authentication (NextAuth.js)
+- [x] Admin authentication setup (NextAuth.js) - In Progress
+  - [x] Login page
+  - [x] Auth API route
+  - [x] Password hashing
+  - [x] User creation scripts
+  - [ ] Enable middleware protection
+  - [ ] Add logout button
+  - [ ] Session checks in admin pages
 - [ ] Search functionality
 - [ ] Product filtering by category
 - [ ] Sort options (price, date, name)
@@ -202,6 +220,29 @@
 - [ ] Integration tests
 - [ ] E2E tests
 - [ ] Load testing
+
+## Recent Developments
+
+### Authentication System (November 2, 2025)
+**Implementation**: NextAuth.js with credentials provider
+- Created admin login page at `/admin/login`
+- Configured NextAuth.js API route with JWT strategy
+- Implemented bcrypt password hashing (10 salt rounds)
+- Created admin user management scripts
+- Set up middleware (currently disabled for testing)
+
+**Technical Details**:
+- Database: User model with email, password, isAdmin fields
+- Session: JWT-based with secure cookies
+- Scripts: `npm run create-admin` and `npm run reset-admin`
+- Security: Bcrypt hashing, admin flag validation
+
+**Next Steps**:
+- Test login flow thoroughly
+- Enable middleware protection
+- Add session checks to admin pages
+- Implement logout functionality
+- Add "forgot password" feature
 
 ## Evolution of Key Decisions
 

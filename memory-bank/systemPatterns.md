@@ -5,6 +5,8 @@
 ### Technology Stack
 - **Framework**: Next.js 15 with App Router
 - **Database**: SQLite with Prisma ORM
+- **Authentication**: NextAuth.js v4 with JWT
+- **Password Hashing**: bcryptjs
 - **State Management**: Zustand (cart)
 - **Styling**: Tailwind CSS
 - **UI Feedback**: react-hot-toast
@@ -81,7 +83,33 @@ function AddToCartButton() {
 }
 ```
 
-### 3. Base64 Image Storage
+### 3. NextAuth.js for Authentication
+**Why**: Industry standard, flexible, secure
+- JWT-based session management
+- Credentials provider for email/password
+- Easy to extend with OAuth providers
+- Built-in CSRF protection
+- Secure cookie handling
+
+**Pattern**:
+```typescript
+// API Route: /api/auth/[...nextauth]/route.ts
+const authOptions: AuthOptions = {
+  providers: [
+    CredentialsProvider({
+      async authorize(credentials) {
+        // Verify user in database
+        // Check password with bcrypt
+        // Return user or null
+      }
+    })
+  ],
+  session: { strategy: "jwt" },
+  pages: { signIn: "/admin/login" }
+}
+```
+
+### 4. Base64 Image Storage
 **Why**: Self-contained, no external dependencies
 - Images stored directly in database
 - No separate file storage needed
@@ -93,6 +121,103 @@ function AddToCartButton() {
 - Keep images under 5MB for best performance
 
 ## Critical Implementation Patterns
+
+### Authentication Pattern
+
+#### User Creation (Admin Scripts)
+```typescript
+// scripts/create-admin.ts
+import bcrypt from 'bcryptjs'
+import { prisma } from '@/lib/prisma'
+
+const hashedPassword = await bcrypt.hash(password, 10)
+await prisma.user.create({
+  data: {
+    email,
+    password: hashedPassword,
+    name,
+    isAdmin: true
+  }
+})
+```
+
+#### Login Flow
+```typescript
+// 1. Client: Submit credentials
+'use client'
+const result = await signIn('credentials', {
+  email,
+  password,
+  redirect: false
+})
+
+// 2. Server: Verify and authorize
+async authorize(credentials) {
+  // Find user
+  const user = await prisma.user.findUnique({
+    where: { email: credentials.email }
+  })
+  
+  // Check admin status
+  if (!user.isAdmin) return null
+  
+  // Verify password
+  const isValid = await bcrypt.compare(
+    credentials.password, 
+    user.password
+  )
+  
+  if (!isValid) return null
+  
+  return { id: user.id, email: user.email, name: user.name }
+}
+
+// 3. JWT Token: Store session
+callbacks: {
+  async jwt({ token, user }) {
+    if (user) token.id = user.id
+    return token
+  },
+  async session({ session, token }) {
+    session.user.id = token.id
+    return session
+  }
+}
+```
+
+#### Middleware Protection
+```typescript
+// middleware.ts
+import { withAuth } from "next-auth/middleware"
+
+export default withAuth({
+  callbacks: {
+    authorized: ({ token }) => !!token
+  }
+})
+
+export const config = {
+  matcher: ['/admin/:path*']
+}
+```
+
+#### Session Check in Components
+```typescript
+// Server Component
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+
+const session = await getServerSession(authOptions)
+if (!session) redirect('/admin/login')
+
+// Client Component
+'use client'
+import { useSession } from 'next-auth/react'
+
+const { data: session, status } = useSession()
+if (status === 'unauthenticated') redirect('/admin/login')
+```
+
 
 ### Image Storage Pattern
 ```typescript
@@ -214,15 +339,22 @@ ProductPage (Server)
 
 ### Admin Flow
 ```
+AdminLoginPage (Client)
+  ├─> Login Form
+  └─> signIn() call to NextAuth
+
 AdminDashboard (Server)
+  ├─> Session Check
   ├─> Stats Display
   └─> Link to Products Management
 
 AdminProductsPage (Server)
+  ├─> Session Check
   ├─> Product List
   └─> CRUD buttons
 
 AdminNewProductPage (Client)
+  ├─> Session Check
   ├─> Form with image upload
   └─> API call to /api/admin/products
 ```

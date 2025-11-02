@@ -80,6 +80,17 @@ npx prisma db push
 npx prisma studio
 ```
 
+### Admin User Setup
+```bash
+# Create first admin user (interactive prompts)
+npm run create-admin
+
+# Reset admin password (interactive prompts)
+npm run reset-admin
+```
+
+**Note**: These scripts use bcrypt to hash passwords with 10 salt rounds.
+
 ### Running Development Server
 ```bash
 npm run dev
@@ -92,8 +103,10 @@ Server runs at: `http://localhost:3000` (or 3001 if 3000 is occupied)
 ```json
 {
   "@prisma/client": "^5.22.0",
+  "bcryptjs": "^2.4.3",
   "lucide-react": "latest",
   "next": "15.5.6",
+  "next-auth": "^4.24.5",
   "react": "latest",
   "react-dom": "latest",
   "react-hot-toast": "^2.4.1",
@@ -104,6 +117,7 @@ Server runs at: `http://localhost:3000` (or 3001 if 3000 is occupied)
 ### Development Dependencies
 ```json
 {
+  "@types/bcryptjs": "^2.4.6",
   "@types/node": "latest",
   "@types/react": "latest",
   "prisma": "^5.22.0",
@@ -207,6 +221,10 @@ npx prisma generate  # Generate Prisma Client
 npx prisma db push   # Update database schema
 npx prisma studio    # Open database GUI
 
+# Admin Management
+npm run create-admin # Create new admin user
+npm run reset-admin  # Reset admin password
+
 # Code Quality
 npm run lint         # Run ESLint
 ```
@@ -242,6 +260,24 @@ Request body too large
 Event handlers cannot be passed to Client Component props
 ```
 **Solution**: Extract interactive elements to separate Client Component with `'use client'` directive
+
+### NextAuth Session Error
+```
+[next-auth][error][JWT_SESSION_ERROR]
+```
+**Solution**: Verify `NEXTAUTH_SECRET` is set in `.env` file
+
+### Admin User Not Found
+```
+No user found with this email
+```
+**Solution**: Run `npm run create-admin` to create an admin user first
+
+### Password Hash Comparison Fails
+```
+bcrypt compare returns false
+```
+**Solution**: Ensure password was hashed with bcrypt.hash() when created, not stored as plain text
 
 ## Performance Optimization
 

@@ -29,9 +29,19 @@ export default function AdminProductsPage() {
     try {
       const res = await fetch('/api/admin/products')
       const data = await res.json()
-      setProducts(data)
+      
+      // Check if data is an array
+      if (Array.isArray(data)) {
+        setProducts(data)
+      } else {
+        console.error('API returned non-array data:', data)
+        toast.error(data.error || 'Failed to load products')
+        setProducts([])
+      }
     } catch (error) {
+      console.error('Error fetching products:', error)
       toast.error('Failed to load products')
+      setProducts([])
     } finally {
       setLoading(false)
     }
