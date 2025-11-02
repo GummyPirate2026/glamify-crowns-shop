@@ -1,0 +1,44 @@
+{
+  "name": "glamify-crowns-shop",
+  "version": "1.0.0",
+  "description": "Self-hosted e-commerce platform for Glamify Crowns",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
+  },
+  "keywords": [
+    "ecommerce",
+    "nextjs",
+    "crowns",
+    "tiaras"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.8.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.454.0",
+    "next": "^15.0.3",
+    "postcss": "^8.4.47",
+    "prisma": "^5.22.0",
+    "react": "^19.0.0-rc-02c0e824-20241028",
+    "react-dom": "^19.0.0-rc-02c0e824-20241028",
+    "react-hot-toast": "^2.4.1",
+    "stripe": "^17.3.1",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3",
+    "zustand": "^5.0.1"
+  }
+}
