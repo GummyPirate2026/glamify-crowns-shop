@@ -1049,6 +1049,258 @@ Do NOT update for:
 
 ---
 
+## GitHub Issue Tracking
+
+### Issue Management System
+
+**Created**: November 3, 2025  
+**Total Issues**: 22 (tracking all incomplete features)  
+**Repository**: https://github.com/GummyPirate2026/glamify-crowns-shop
+
+### Issue Tracking Workflow
+
+```mermaid
+flowchart TD
+    Start([Start Development]) --> ReadMaster[Read Master Plan]
+    ReadMaster --> CheckIssues[Check GitHub Issues]
+    CheckIssues --> SelectIssue[Select Issue to Work On]
+    
+    SelectIssue --> Develop[Implement Feature]
+    Develop --> Test[Test Implementation]
+    Test --> Verify{Meets Acceptance<br/>Criteria?}
+    
+    Verify -->|No| Develop
+    Verify -->|Yes| UpdateMemory[Update Memory Bank Files]
+    
+    UpdateMemory --> CheckMaster{Master Plan<br/>Needs Update?}
+    CheckMaster -->|Yes| UpdateMaster[Update Master Plan]
+    CheckMaster -->|No| CommitCode[Commit Code Changes]
+    UpdateMaster --> CommitCode
+    
+    CommitCode --> CloseIssue[Close GitHub Issue]
+    CloseIssue --> LinkCommit[Reference Commit in Issue]
+    LinkCommit --> UpdateProgress[Update progress.md]
+    
+    UpdateProgress --> More{More Issues<br/>to Address?}
+    More -->|Yes| CheckIssues
+    More -->|No| Done([Development Complete])
+    
+    style Start fill:#e1f5ff
+    style CloseIssue fill:#e1ffe1
+    style Done fill:#e1ffe1
+    style UpdateMemory fill:#ffe1e1
+```
+
+### Systematic Issue Closure Process
+
+**Step-by-Step Workflow:**
+
+1. **Before Starting Work**
+   ```bash
+   # View all open issues
+   gh issue list
+   
+   # View issues by milestone
+   gh issue list --milestone "Phase 2: E-commerce Essentials"
+   
+   # View issues by label
+   gh issue list --label "priority: critical"
+   ```
+
+2. **During Development**
+   - Reference issue number in commit messages: `git commit -m "feat: implement checkout flow (#5)"`
+   - Check acceptance criteria in issue description
+   - Update progress as you complete sub-tasks
+
+3. **After Implementation**
+   - Verify all acceptance criteria met
+   - Update memory bank files (activeContext.md, progress.md)
+   - Update master plan if architecture changed
+   - Run tests if applicable
+
+4. **Closing Issues**
+   ```bash
+   # Close issue with message
+   gh issue close 5 --comment "Implemented checkout flow with all acceptance criteria met. See commit abc123."
+   
+   # Or close via commit message
+   git commit -m "feat: implement checkout flow
+
+   Closes #5
+   
+   - Added multi-step checkout page
+   - Shipping address form with validation
+   - Payment method selection
+   - Order review step
+   - Mobile responsive design"
+   ```
+
+5. **Cross-Reference Check**
+   - Confirm feature is marked complete in `progress.md`
+   - Confirm feature is removed from "Not Yet Implemented" in `progress.md`
+   - Update roadmap checklist in master plan if applicable
+
+### Issue-to-Feature Mapping
+
+#### **Phase 2: E-commerce Essentials** (Milestone 1)
+
+| Issue # | Feature | Priority | Memory Bank Impact |
+|---------|---------|----------|-------------------|
+| [#2](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/2) | Enable authentication middleware | Critical | Update activeContext.md, systemPatterns.md |
+| [#3](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/3) | Add logout functionality | High | Update activeContext.md, progress.md |
+| [#4](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/4) | Add session validation | High | Update systemPatterns.md |
+| [#5](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/5) | Implement checkout flow | Critical | Update progress.md, master plan |
+| [#6](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/6) | Integrate Stripe payments | Critical | Update techContext.md, progress.md |
+| [#7](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/7) | Build order management | Critical | Update master plan, progress.md |
+
+#### **Phase 3: Enhanced Features** (Milestone 2)
+
+| Issue # | Feature | Priority | Memory Bank Impact |
+|---------|---------|----------|-------------------|
+| [#8](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/8) | Product search | High | Update progress.md |
+| [#9](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/9) | Category filtering & sorting | High | Update progress.md |
+| [#10](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/10) | Product variants system | Medium | Update master plan, schema diagram |
+| [#11](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/11) | Review & rating system | Medium | Update master plan, schema diagram |
+| [#12](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/12) | Wishlist feature | Low | Update progress.md |
+| [#13](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/13) | Related products | Low | Update progress.md |
+| [#14](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/14) | Recently viewed tracking | Low | Update progress.md |
+
+#### **Phase 4: Business Tools** (Milestone 3)
+
+| Issue # | Feature | Priority | Memory Bank Impact |
+|---------|---------|----------|-------------------|
+| [#15](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/15) | Discount/coupon system | Medium | Update master plan, schema diagram |
+| [#16](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/16) | Inventory alerts | Medium | Update systemPatterns.md |
+| [#17](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/17) | Sales analytics dashboard | Medium | Update progress.md |
+| [#18](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/18) | Customer insights | Low | Update progress.md |
+
+#### **Phase 5: Scale & Optimize** (Milestone 4)
+
+| Issue # | Feature | Priority | Memory Bank Impact |
+|---------|---------|----------|-------------------|
+| [#19](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/19) | CDN for images | Medium | Update techContext.md, master plan |
+| [#20](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/20) | Caching strategy | Medium | Update systemPatterns.md |
+| [#21](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/21) | Performance optimization | Medium | Update techContext.md |
+| [#22](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/22) | SEO improvements | Medium | Update techContext.md |
+| [#23](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/23) | Multi-channel integration | Low | Update master plan |
+
+### Automated Issue Closure
+
+**Using Commit Messages:**
+```bash
+# These keywords automatically close issues when merged to main
+git commit -m "fix: enable auth middleware
+
+Closes #2
+Fixes #2  
+Resolves #2
+
+All automatically close the issue"
+```
+
+**Using Pull Requests:**
+```markdown
+## Description
+Enable authentication middleware for production
+
+## Related Issue
+Closes #2
+
+## Changes
+- Uncommented middleware protection
+- Tested admin route protection
+- Verified redirect behavior
+```
+
+### Progress Tracking Commands
+
+```bash
+# View all open issues
+gh issue list
+
+# View closed issues
+gh issue list --state closed
+
+# View issues by milestone
+gh issue list --milestone "Phase 2: E-commerce Essentials"
+
+# View issues by label
+gh issue list --label "priority: critical"
+
+# View your progress
+gh issue list --assignee @me
+
+# Check milestone progress
+gh api repos/GummyPirate2026/glamify-crowns-shop/milestones
+```
+
+### Integration with Memory Bank Updates
+
+**When Closing an Issue, Update These Files:**
+
+1. **activeContext.md**
+   - Remove from "Next Possible Steps" if listed
+   - Add to "Recent Changes & Fixes" section
+   - Update "What's Currently Working" if major feature
+
+2. **progress.md**
+   - Check checkbox in "Completed Features"
+   - Remove from "Not Yet Implemented"
+   - Add to "Recent Developments"
+   - Update "Project Health" if milestone achieved
+
+3. **systemPatterns.md** (if architecture changed)
+   - Update architecture diagrams
+   - Document new patterns
+   - Update code examples
+
+4. **techContext.md** (if tech stack changed)
+   - Add new dependencies
+   - Update setup instructions
+   - Document new integrations
+
+5. **master plan** (this file - if major change)
+   - Update relevant diagrams
+   - Update scope section
+   - Update roadmap checkboxes
+
+### Master Plan Update Triggers
+
+Update this master plan when closing issues that involve:
+
+✅ **Schema Changes** → Update Database ERD
+- Issues: #10, #11, #15
+
+✅ **New Pages/Routes** → Update File Structure
+- Issues: #5, #7, #8, #17
+
+✅ **New API Endpoints** → Update API Routes Map
+- Issues: #5, #6, #7, #15, #17
+
+✅ **Architecture Changes** → Update System Architecture
+- Issues: #19, #20
+
+✅ **Major Features** → Update MVP Scope Mind Map
+- Issues: #5, #6, #7
+
+### Quick Reference: Issue Status Check
+
+```bash
+# Before starting work session
+gh issue list --milestone "Phase 2: E-commerce Essentials" --state open
+
+# After completing feature
+gh issue close <number> --comment "Feature complete. Updated memory bank."
+
+# Verify closure
+gh issue view <number>
+
+# Check overall progress
+gh issue list --state all | head -20
+```
+
+---
+
 ## Future Roadmap
 
 ### Phase 1: Complete MVP ✅
@@ -1059,32 +1311,32 @@ Do NOT update for:
 - [x] Image upload
 - [x] Basic inventory
 
-### Phase 2: E-commerce Essentials (Next Steps)
-- [ ] Customer authentication
-- [ ] Checkout flow
-- [ ] Payment processing (Stripe)
-- [ ] Order management
-- [ ] Email notifications
-- [ ] Enable authentication middleware
+### Phase 2: E-commerce Essentials → [6 Open Issues](https://github.com/GummyPirate2026/glamify-crowns-shop/milestone/1)
+- [ ] Enable authentication middleware ([#2](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/2))
+- [ ] Add logout functionality ([#3](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/3))
+- [ ] Add session validation ([#4](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/4))
+- [ ] Implement checkout flow ([#5](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/5))
+- [ ] Integrate Stripe payments ([#6](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/6))
+- [ ] Build order management ([#7](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/7))
 
-### Phase 3: Enhanced Features
-- [ ] Product search
-- [ ] Advanced filtering
-- [ ] Product variants
-- [ ] Customer reviews
-- [ ] Wishlist
-- [ ] Shipping calculation
+### Phase 3: Enhanced Features → [7 Open Issues](https://github.com/GummyPirate2026/glamify-crowns-shop/milestone/2)
+- [ ] Product search ([#8](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/8))
+- [ ] Category filtering & sorting ([#9](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/9))
+- [ ] Product variants ([#10](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/10))
+- [ ] Reviews & ratings ([#11](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/11))
+- [ ] Wishlist ([#12](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/12))
+- [ ] Related products ([#13](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/13))
+- [ ] Recently viewed ([#14](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/14))
 
-### Phase 4: Business Tools
-- [ ] Discount/coupon system
-- [ ] Inventory alerts
-- [ ] Sales analytics
-- [ ] Customer insights
-- [ ] Marketing tools
+### Phase 4: Business Tools → [4 Open Issues](https://github.com/GummyPirate2026/glamify-crowns-shop/milestone/3)
+- [ ] Discount/coupon system ([#15](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/15))
+- [ ] Inventory alerts ([#16](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/16))
+- [ ] Sales analytics ([#17](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/17))
+- [ ] Customer insights ([#18](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/18))
 
-### Phase 5: Scale & Optimize
-- [ ] CDN for images
-- [ ] Caching strategy
-- [ ] Performance optimization
-- [ ] SEO improvements
-- [ ] Multi-channel
+### Phase 5: Scale & Optimize → [5 Open Issues](https://github.com/GummyPirate2026/glamify-crowns-shop/milestone/4)
+- [ ] CDN for images ([#19](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/19))
+- [ ] Caching strategy ([#20](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/20))
+- [ ] Performance optimization ([#21](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/21))
+- [ ] SEO improvements ([#22](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/22))
+- [ ] Multi-channel integration ([#23](https://github.com/GummyPirate2026/glamify-crowns-shop/issues/23))
